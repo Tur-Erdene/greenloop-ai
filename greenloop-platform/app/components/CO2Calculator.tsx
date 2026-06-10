@@ -13,10 +13,11 @@ export default function CO2Calculator() {
 
   const calculate = () => {
     const coeff = CO2_COEFFICIENTS[material];
-    const co2Saved = (coeff.co2_per_kg * weight).toFixed(1);
+    const co2SavedNum = coeff.co2_per_kg * weight;
+    const co2Saved = co2SavedNum.toFixed(1);
     const price = (coeff.price * weight).toFixed(0);
-    const treesEquivalent = (co2Saved / 22).toFixed(2);
-    const ecoPoints = Math.floor(co2Saved * 2 + 5);
+    const treesEquivalent = (co2SavedNum / 22).toFixed(2);
+    const ecoPoints = Math.floor(co2SavedNum * 2 + 5);
 
     setResult({
       co2Saved,
