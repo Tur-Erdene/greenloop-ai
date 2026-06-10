@@ -4,8 +4,10 @@ import React, { useState } from 'react';
 import { Calculator, Recycle, ChevronRight } from 'lucide-react';
 import { CO2_COEFFICIENTS } from '../../lib/db-schema';
 
+type MaterialKey = keyof typeof CO2_COEFFICIENTS;
+
 export default function CO2Calculator() {
-  const [material, setMaterial] = useState('pet');
+  const [material, setMaterial] = useState<MaterialKey>('pet');
   const [weight, setWeight] = useState(2);
   const [result, setResult] = useState(null);
 
