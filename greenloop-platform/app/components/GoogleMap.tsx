@@ -32,9 +32,8 @@ export default function RecyclingMap() {
   const [directions, setDirections] = useState<google.maps.DirectionsResult | null>(null);
   const [map, setMap] = useState<google.maps.Map | null>(null);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
 
-  // Demo centers (replace with Supabase API call)
+  // Demo centers
   useEffect(() => {
     const demoCenters: RecyclingCenter[] = [
       {
@@ -94,7 +93,7 @@ export default function RecyclingMap() {
 
   // Calculate distance between two points
   const getDistance = useCallback((p1: { lat: number; lng: number }, p2: { lat: number; lng: number }) => {
-    const R = 6371; // km
+    const R = 6371;
     const dLat = ((p2.lat - p1.lat) * Math.PI) / 180;
     const dLng = ((p2.lng - p1.lng) * Math.PI) / 180;
     const a =
@@ -105,37 +104,6 @@ export default function RecyclingMap() {
         Math.sin(dLng / 2);
     return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
   }, []);
-
-  // Find nearest center
-  const findNearestCenter = useCallback(() => {
-    if (!userLocation || !map) return;
-
-    let nearest: RecyclingCenter | null = null;
-    let minDistance = Infinity;
-
-    centers.forEach((center) => {
-      const distance = getDistance(userLocation, { lat: center.lat, lng: center.lng });
-      if (distance < minDistance) {
-        minDistance = distance;
-        nearest = center;
-      }
-    });
-
-    const nearestCenter: RecyclingCenter = nearest;
-    setSelectedCenter(nearestCenter);
-    calculateRoute(nearestCenter);
-    
-    // Pan to center
-    map.panTo({ lat: nearestCenter.lat, lng: nearestCenter.lng });
-    map.setZoom(15);
-  }, [userLocation, centers, map, getDistance]);
-      calculateRoute(nearestCenter);
-      
-      // Pan to center
-      map.panTo({ lat: nearestCenter.lat, lng: nearestCenter.lng });
-      map.setZoom(15);
-    }
-  }, [userLocation, centers, map, getDistance]);
 
   // Calculate route
   const calculateRoute = useCallback((destination: RecyclingCenter) => {
@@ -158,6 +126,29 @@ export default function RecyclingMap() {
       }
     );
   }, [userLocation]);
+
+  // Find nearest center
+  const findNearestCenter = useCallback(() => {
+    if (!userLocation || !map) return;
+
+    let nearest: RecyclingCenter | null = null;
+    let minDistance = Infinity;
+
+    centers.forEach((center) => {
+      const distance = getDistance(userLocation, { lat: center.lat, lng: center.lng });
+      if (distance < minDistance) {
+        minDistance = distance;
+        nearest = center;
+      }
+    });
+
+    if (!nearest) return;
+    
+    setSelectedCenter(nearest);
+    calculateRoute(nearest);
+    map.panTo({ lat: nearest.lat, lng: nearest.lng });
+    map.setZoom(15);
+  }, [userLocation, centers, map, getDistance, calculateRoute]);
 
   // Clear directions
   const clearRoute = () => {
