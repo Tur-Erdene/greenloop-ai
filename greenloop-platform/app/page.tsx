@@ -24,7 +24,7 @@ export default function HomePage() {
         <meta name="description" content="Монголын анхны AI-driven дахин боловсруулалтын систем" />
       </Head>
 
-      <Navbar onNavigate={setActiveSection} />
+      <Navbar />
 
       <main>
         <Hero />
