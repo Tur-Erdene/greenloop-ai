@@ -137,7 +137,7 @@ export default function CO2Calculator() {
 
                 <div className="bg-white/10 rounded-xl p-4">
                   <div className="text-lg font-semibold">
-                    {result.price}₮ үнэ цэнэтэй
+                    {Math.abs(Number(result.price)).toLocaleString()}₮ Хүлээн авах дүн
                   </div>
                   <div className="text-white/70 text-sm">
                     {result.materialName} — {weight} кг дахин боловсруулснаар

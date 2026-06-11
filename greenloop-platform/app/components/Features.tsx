@@ -51,7 +51,7 @@ export default function Features() {
             Боломжууд
           </span>
           <h2 className="text-3xl md:text-4xl font-bold text-dark mb-4">
-            Нэг платформ, бүх нөлөө
+            Ногоон платформ ба боломж
           </h2>
           <p className="text-gray-500 max-w-lg mx-auto">
             Дахин боловсруулалтын бүтэн экосистемийг нэг дор хяна.
