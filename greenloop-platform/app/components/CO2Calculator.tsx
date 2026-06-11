@@ -6,16 +6,18 @@ import { CO2_COEFFICIENTS } from '../../lib/db-schema';
 
 type MaterialKey = keyof typeof CO2_COEFFICIENTS;
 
+interface CalcResult {
+  co2Saved: string;
+  price: string;
+  treesEquivalent: string;
+  ecoPoints: number;
+  materialName: string;
+}
+
 export default function CO2Calculator() {
   const [material, setMaterial] = useState<MaterialKey>('pet');
   const [weight, setWeight] = useState(2);
-  const [result, setResult] = useState<{
-    co2Saved: string;
-    price: string;
-    treesEquivalent: string;
-    ecoPoints: number;
-    materialName: string;
-  } | null>(null);
+  const [result, setResult] = useState<CalcResult | null>(null);
 
   const calculate = () => {
     const coeff = CO2_COEFFICIENTS[material];
@@ -33,6 +35,8 @@ export default function CO2Calculator() {
       materialName: coeff.name,
     });
   };
+
+  const materials = Object.entries(CO2_COEFFICIENTS) as [MaterialKey, { name: string; co2_per_kg: number; price: number }][];
 
   return (
     <section id="calculator" className="py-24 px-4 bg-white">
@@ -64,22 +68,20 @@ export default function CO2Calculator() {
                   Материал төрөл
                 </label>
                 <div className="grid grid-cols-2 gap-2">
-                  {Object.entries(CO2_COEFFICIENTS).map(([key, value]) => {
-                  const materialKey = key as MaterialKey;
-                  return (
+                  {materials.map(([key, value]) => (
                     <button
                       key={key}
-                      onClick={() => setMaterial(materialKey)}
+                      onClick={() => setMaterial(key)}
                       className={`px-4 py-3 rounded-xl text-sm font-medium transition-all ${
-                        material === materialKey
+                        material === key
                           ? 'bg-primary text-white shadow-md'
                           : 'bg-white border border-gray-200 text-gray-600 hover:border-primary'
                       }`}
                     >
                       {value.name}
                     </button>
-                  );
-                })}
+                  ))}
+                </div>
               </div>
 
               <div>
