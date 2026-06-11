@@ -62,7 +62,7 @@ export default function Hero() {
 
           <div className="flex flex-wrap gap-4 mb-16">
             <a
-              href="#calculator"
+              href="/register"
               className="inline-flex items-center gap-2 bg-primary text-white px-8 py-4 rounded-full font-semibold hover:bg-primary-dark transition-all hover:-translate-y-1 hover:shadow-lg"
             >
               CO₂ нөлөө тооцоолох

@@ -3,6 +3,7 @@
 import React, { useState } from 'react';
 import dynamic from 'next/dynamic';
 import Head from 'next/head';
+import Link from 'next/link';
 import Navbar from './components/Navbar';
 import Hero from './components/Hero';
 import CO2Calculator from './components/CO2Calculator';
@@ -93,9 +94,11 @@ export default function HomePage() {
             <p className="text-white/90 mb-8 max-w-lg mx-auto">
               GreenLoop AI-д нэгдэж, өөрийн экологийн нөлөөг хэмжиж, урамшуулал аваарай.
             </p>
-            <button className="bg-white text-primary-dark px-8 py-4 rounded-full font-semibold hover:shadow-lg transition-all hover:-translate-y-1">
-              Бүртгүүлэх
-            </button>
+            <Link href="/register">
+              <button className="bg-white text-primary-dark px-8 py-4 rounded-full font-semibold hover:shadow-lg transition-all hover:-translate-y-1">
+                Бүртгүүлэх
+              </button>
+            </Link>
           </div>
         </section>
       </main>

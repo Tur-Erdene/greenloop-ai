@@ -37,10 +37,10 @@ export default function Navbar() {
               </a>
             ))}
             <a
-              href="#start"
+              href="/register"
               className="bg-primary text-white px-5 py-2 rounded-full text-sm font-semibold hover:bg-primary-dark transition-colors"
             >
-              Эхлэх
+              Бүртгүүлэх
             </a>
           </div>
 
