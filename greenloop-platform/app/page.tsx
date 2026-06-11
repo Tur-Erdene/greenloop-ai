@@ -1,18 +1,30 @@
 'use client'
 
 import React, { useState } from 'react';
+import dynamic from 'next/dynamic';
 import Head from 'next/head';
 import Navbar from './components/Navbar';
 import Hero from './components/Hero';
 import CO2Calculator from './components/CO2Calculator';
 import Features from './components/Features';
 import HowItWorks from './components/HowItWorks';
-import GoogleMap from './components/GoogleMap';
 import Leaderboard from './components/Leaderboard';
 import TreeFund from './components/TreeFund';
 import PaymentForm from './components/PaymentForm';
 import Impact from './components/Impact';
 import Footer from './components/Footer';
+
+const GoogleMap = dynamic(() => import('./components/GoogleMap'), {
+  ssr: false,
+  loading: () => (
+    <div className="flex items-center justify-center h-96 bg-gray-50 rounded-2xl">
+      <div className="text-center">
+        <div className="w-12 h-12 border-4 border-primary border-t-transparent rounded-full animate-spin mx-auto mb-4" />
+        <p className="text-gray-500">Газрын зураг ачаалж байна...</p>
+      </div>
+    </div>
+  ),
+});
 
 export default function HomePage() {
   const [activeSection, setActiveSection] = useState('hero');
