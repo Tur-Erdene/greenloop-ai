@@ -9,7 +9,13 @@ type MaterialKey = keyof typeof CO2_COEFFICIENTS;
 export default function CO2Calculator() {
   const [material, setMaterial] = useState<MaterialKey>('pet');
   const [weight, setWeight] = useState(2);
-  const [result, setResult] = useState(null);
+  const [result, setResult] = useState<{
+    co2Saved: string;
+    price: string;
+    treesEquivalent: string;
+    ecoPoints: number;
+    materialName: string;
+  } | null>(null);
 
   const calculate = () => {
     const coeff = CO2_COEFFICIENTS[material];
