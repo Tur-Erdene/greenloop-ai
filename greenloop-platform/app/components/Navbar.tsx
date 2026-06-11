@@ -10,6 +10,7 @@ export default function Navbar() {
     { label: 'CO₂ Тооцоолуур', href: '#calculator' },
     { label: 'Боломжууд', href: '#features' },
     { label: 'AI Зөвлөх', href: '/ai-advisor' },
+    { label: 'Гарын авлага', href: '/recycling-guide' },
     { label: 'Процесс', href: '#how-it-works' },
     { label: 'Газрын зураг', href: '#map' },
     { label: 'Leaderboard', href: '#leaderboard' },
