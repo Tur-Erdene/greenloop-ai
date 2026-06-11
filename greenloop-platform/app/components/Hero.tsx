@@ -25,7 +25,7 @@ export default function Hero() {
 
   function animateValue(start: number, end: number, duration: number, callback: (value: number) => void) {
     const startTime = performance.now();
-    function update(currentTime) {
+    function update(currentTime: number) {
       const elapsed = currentTime - startTime;
       const progress = Math.min(elapsed / duration, 1);
       const ease = 1 - Math.pow(1 - progress, 3);
