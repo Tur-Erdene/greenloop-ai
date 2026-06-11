@@ -31,7 +31,7 @@ const steps = [
 ];
 
 export default function HowItWorks() {
-  const sectionRef = useRef<HTMLElement>(null);
+  const sectionRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const observer = new IntersectionObserver(
