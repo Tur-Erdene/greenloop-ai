@@ -129,9 +129,9 @@ export default function RecyclingMap() {
 
   // Find nearest center
   const findNearestCenter = useCallback(() => {
-    if (!userLocation || !map) return;
+    if (!userLocation || !map || centers.length === 0) return;
 
-    let nearest: RecyclingCenter | null = null;
+    let nearest: RecyclingCenter = centers[0];
     let minDistance = Infinity;
 
     centers.forEach((center) => {
@@ -141,8 +141,6 @@ export default function RecyclingMap() {
         nearest = center;
       }
     });
-
-    if (!nearest) return;
     
     setSelectedCenter(nearest);
     calculateRoute(nearest);
