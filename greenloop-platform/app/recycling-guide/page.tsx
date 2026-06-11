@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import Link from 'next/link';
 import {
   ArrowLeft,
@@ -33,6 +33,14 @@ import {
   Truck,
   TreePine,
   Zap,
+  Camera,
+  Upload,
+  Loader2,
+  ImageIcon,
+  ScanLine,
+  Sparkles,
+  X,
+  RefreshCw,
 } from 'lucide-react';
 
 const quizQuestions = [
@@ -145,6 +153,272 @@ function Alert({ type, children }: { type: 'warning' | 'tip'; children: React.Re
   );
 }
 
+// AI Waste Scanner Component
+function AIWasteScanner() {
+  const [image, setImage] = useState<string | null>(null);
+  const [loading, setLoading] = useState(false);
+  const [result, setResult] = useState<any>(null);
+  const [error, setError] = useState('');
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    if (!file.type.startsWith('image/')) {
+      setError('Зөвхөн зураг файл оруулна уу (JPEG, PNG)');
+      return;
+    }
+
+    if (file.size > 5 * 1024 * 1024) {
+      setError('Зургийн хэмжээ 5MB-с ихгүй байх ёстой');
+      return;
+    }
+
+    setError('');
+    setResult(null);
+
+    const reader = new FileReader();
+    reader.onload = (event) => {
+      setImage(event.target?.result as string);
+    };
+    reader.readAsDataURL(file);
+  };
+
+  const analyzeImage = async () => {
+    if (!image) return;
+
+    setLoading(true);
+    setError('');
+
+    try {
+      const res = await fetch('/api/analyze-waste', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ image }),
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        throw new Error(data.error || 'Алдаа гарлаа');
+      }
+
+      setResult(data.result);
+    } catch (err: any) {
+      setError(err?.message || 'Зураг танихад алдаа гарлаа');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const reset = () => {
+    setImage(null);
+    setResult(null);
+    setError('');
+    if (fileInputRef.current) {
+      fileInputRef.current.value = '';
+    }
+  };
+
+  const categoryColors: Record<string, string> = {
+    plastic: 'bg-yellow-50 border-yellow-200 text-yellow-700',
+    paper: 'bg-blue-50 border-blue-200 text-blue-700',
+    glass: 'bg-green-50 border-green-200 text-green-700',
+    metal: 'bg-gray-50 border-gray-200 text-gray-700',
+    organic: 'bg-emerald-50 border-emerald-200 text-emerald-700',
+    hazardous: 'bg-red-50 border-red-200 text-red-700',
+    general: 'bg-slate-50 border-slate-200 text-slate-700',
+    unknown: 'bg-gray-50 border-gray-200 text-gray-700',
+  };
+
+  const categoryNames: Record<string, string> = {
+    plastic: 'Хуванцар',
+    paper: 'Цаас',
+    glass: 'Шил',
+    metal: 'Металл',
+    organic: 'Органик',
+    hazardous: 'Аюултай',
+    general: 'Энгийн',
+    unknown: 'Тодорхойгүй',
+  };
+
+  const categoryIcons: Record<string, any> = {
+    plastic: Recycle,
+    paper: BookOpen,
+    glass: Droplets,
+    metal: Zap,
+    organic: Leaf,
+    hazardous: AlertTriangle,
+    general: Trash2,
+    unknown: Info,
+  };
+
+  return (
+    <div className="bg-white rounded-2xl border border-gray-100 shadow-lg overflow-hidden">
+      <div className="p-6">
+        <div className="flex items-center gap-3 mb-4">
+          <div className="w-10 h-10 bg-gradient-to-br from-primary to-primary-dark rounded-xl flex items-center justify-center shadow-lg shadow-primary/20">
+            <ScanLine className="w-5 h-5 text-white" />
+          </div>
+          <div>
+            <h2 className="text-lg font-bold text-dark">AI Зураг Таньж Хог Ангилах</h2>
+            <p className="text-sm text-gray-400">Зураг оруулаад AI хогийг автоматаар ангилна</p>
+          </div>
+        </div>
+
+        {!image && (
+          <div
+            onClick={() => fileInputRef.current?.click()}
+            className="border-2 border-dashed border-gray-200 rounded-xl p-8 text-center cursor-pointer hover:border-primary/50 hover:bg-primary/5 transition-all"
+          >
+            <input
+              ref={fileInputRef}
+              type="file"
+              accept="image/jpeg,image/png,image/webp"
+              onChange={handleFileChange}
+              className="hidden"
+            />
+            <div className="w-16 h-16 bg-gray-50 rounded-full flex items-center justify-center mx-auto mb-4">
+              <Camera className="w-8 h-8 text-gray-400" />
+            </div>
+            <p className="text-sm font-medium text-gray-600 mb-1">
+              Зураг оруулах
+            </p>
+            <p className="text-xs text-gray-400">
+              JPEG, PNG • Max 5MB
+            </p>
+          </div>
+        )}
+
+        {image && !result && (
+          <div className="space-y-4">
+            <div className="relative rounded-xl overflow-hidden">
+              <img
+                src={image}
+                alt="Upload preview"
+                className="w-full max-h-64 object-contain bg-gray-50 rounded-xl"
+              />
+              <button
+                onClick={reset}
+                className="absolute top-2 right-2 w-8 h-8 bg-white/90 rounded-full flex items-center justify-center shadow-md hover:bg-white transition-colors"
+              >
+                <X className="w-4 h-4 text-gray-600" />
+              </button>
+            </div>
+
+            <button
+              onClick={analyzeImage}
+              disabled={loading}
+              className="w-full bg-primary text-white py-4 rounded-xl font-bold hover:bg-primary-dark transition-all hover:shadow-lg flex items-center justify-center gap-2"
+            >
+              {loading ? (
+                <>
+                  <Loader2 className="w-5 h-5 animate-spin" />
+                  AI хогийг таньж байна...
+                </>
+              ) : (
+                <>
+                  <Sparkles className="w-5 h-5" />
+                  AI Хог Ангилах
+                </>
+              )}
+            </button>
+          </div>
+        )}
+
+        {error && (
+          <div className="mt-4 p-4 bg-red-50 border border-red-200 rounded-xl text-red-600 text-sm flex items-center gap-2">
+            <AlertTriangle className="w-4 h-4 flex-shrink-0" />
+            {error}
+          </div>
+        )}
+
+        {result && (
+          <div className="space-y-4">
+            <div className={`p-4 rounded-xl border ${categoryColors[result.category] || categoryColors.unknown}`}>
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 bg-white/80 rounded-lg flex items-center justify-center">
+                  {React.createElement(categoryIcons[result.category] || Trash2, { className: 'w-5 h-5' })}
+                </div>
+                <div>
+                  <div className="text-sm font-medium opacity-70">Ангилал</div>
+                  <div className="text-xl font-bold">{categoryNames[result.category] || result.category}</div>
+                </div>
+              </div>
+            </div>
+
+            {result.description && (
+              <div className="bg-gray-50 rounded-xl p-4">
+                <div className="text-sm font-medium text-gray-700 mb-1">Тайлбар</div>
+                <div className="text-sm text-gray-600">{result.description}</div>
+              </div>
+            )}
+
+            {result.preparation && (
+              <div className="bg-blue-50 rounded-xl p-4 border border-blue-100">
+                <div className="flex items-center gap-2 mb-2">
+                  <Info className="w-4 h-4 text-blue-500" />
+                  <div className="text-sm font-medium text-blue-700">Бэлдэх заавар</div>
+                </div>
+                <div className="text-sm text-blue-600">{result.preparation}</div>
+              </div>
+            )}
+
+            {result.location && (
+              <div className="bg-green-50 rounded-xl p-4 border border-green-100">
+                <div className="flex items-center gap-2 mb-2">
+                  <MapPin className="w-4 h-4 text-green-500" />
+                  <div className="text-sm font-medium text-green-700">Хаана өгөх</div>
+                </div>
+                <div className="text-sm text-green-600">{result.location}</div>
+              </div>
+            )}
+
+            {result.impact && (
+              <div className="bg-purple-50 rounded-xl p-4 border border-purple-100">
+                <div className="flex items-center gap-2 mb-2">
+                  <Leaf className="w-4 h-4 text-purple-500" />
+                  <div className="text-sm font-medium text-purple-700">Эко нөлөө</div>
+                </div>
+                <div className="text-sm text-purple-600">{result.impact}</div>
+              </div>
+            )}
+
+            {result.ecoPoints && (
+              <div className="bg-amber-50 rounded-xl p-4 border border-amber-100 flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <Award className="w-4 h-4 text-amber-500" />
+                  <div className="text-sm font-medium text-amber-700">Эко оноо</div>
+                </div>
+                <div className="text-2xl font-bold text-amber-600">+{result.ecoPoints}</div>
+              </div>
+            )}
+
+            {result.warning && (
+              <div className="bg-red-50 rounded-xl p-4 border border-red-100">
+                <div className="flex items-center gap-2 mb-1">
+                  <AlertTriangle className="w-4 h-4 text-red-500" />
+                  <div className="text-sm font-medium text-red-700">Анхааруулга</div>
+                </div>
+                <div className="text-sm text-red-600">{result.warning}</div>
+              </div>
+            )}
+
+            <button
+              onClick={reset}
+              className="w-full bg-gray-100 text-gray-700 py-3 rounded-xl font-medium hover:bg-gray-200 transition-all flex items-center justify-center gap-2"
+            >
+              <RefreshCw className="w-4 h-4" />
+              Өөр зураг оруулах
+            </button>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
 export default function RecyclingGuidePage() {
   const [quizStarted, setQuizStarted] = useState(false);
   const [currentQ, setCurrentQ] = useState(0);
@@ -217,6 +491,9 @@ export default function RecyclingGuidePage() {
       </div>
 
       <main className="max-w-4xl mx-auto px-4 py-6 space-y-6">
+        {/* AI Photo Upload Section */}
+        <AIWasteScanner />
+
         {/* Hero */}
         <div className="bg-gradient-to-br from-primary-dark to-primary rounded-2xl p-8 text-white text-center">
           <Recycle className="w-10 h-10 mx-auto mb-3 opacity-90" />
