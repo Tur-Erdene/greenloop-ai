@@ -121,12 +121,18 @@ export default function RecyclingMap() {
       }
     });
 
-    if (nearest) {
-      setSelectedCenter(nearest);
-      calculateRoute(nearest);
+    const nearestCenter: RecyclingCenter = nearest;
+    setSelectedCenter(nearestCenter);
+    calculateRoute(nearestCenter);
+    
+    // Pan to center
+    map.panTo({ lat: nearestCenter.lat, lng: nearestCenter.lng });
+    map.setZoom(15);
+  }, [userLocation, centers, map, getDistance]);
+      calculateRoute(nearestCenter);
       
       // Pan to center
-      map.panTo({ lat: nearest.lat, lng: nearest.lng });
+      map.panTo({ lat: nearestCenter.lat, lng: nearestCenter.lng });
       map.setZoom(15);
     }
   }, [userLocation, centers, map, getDistance]);
