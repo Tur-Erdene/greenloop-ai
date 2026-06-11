@@ -64,20 +64,22 @@ export default function CO2Calculator() {
                   Материал төрөл
                 </label>
                 <div className="grid grid-cols-2 gap-2">
-                  {Object.entries(CO2_COEFFICIENTS).map(([key, value]) => (
+                  {Object.entries(CO2_COEFFICIENTS).map(([key, value]) => {
+                  const materialKey = key as MaterialKey;
+                  return (
                     <button
                       key={key}
-                      onClick={() => setMaterial(key)}
+                      onClick={() => setMaterial(materialKey)}
                       className={`px-4 py-3 rounded-xl text-sm font-medium transition-all ${
-                        material === key
+                        material === materialKey
                           ? 'bg-primary text-white shadow-md'
                           : 'bg-white border border-gray-200 text-gray-600 hover:border-primary'
                       }`}
                     >
                       {value.name}
                     </button>
-                  ))}
-                </div>
+                  );
+                })}
               </div>
 
               <div>
