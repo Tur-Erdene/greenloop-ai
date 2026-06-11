@@ -6,14 +6,12 @@ import {
   ArrowLeft,
   Recycle,
   Trash2,
-  Lightbulb,
-  MapPin,
-  CheckCircle,
-  XCircle,
   ChevronDown,
   ChevronUp,
   Leaf,
   AlertTriangle,
+  Lightbulb,
+  MapPin,
   Award,
   BookOpen,
   Home,
@@ -28,9 +26,15 @@ import {
   LightbulbIcon,
   Droplets,
   Wind,
+  CheckCircle,
+  XCircle,
+  ArrowRight,
+  Info,
+  Truck,
+  TreePine,
+  Zap,
 } from 'lucide-react';
 
-// --- Quiz Data ---
 const quizQuestions = [
   {
     question: '«Гоё» жүүсний хоосон хуванцар савыг аль ангилалд хийх вэ?',
@@ -84,48 +88,47 @@ const quizQuestions = [
   },
 ];
 
-// --- Components ---
+const sections = [
+  { id: 'plastic', title: 'Хуванцар', icon: Recycle, color: 'bg-yellow-100 text-yellow-600' },
+  { id: 'paper', title: 'Цаас, картон', icon: BookOpen, color: 'bg-blue-100 text-blue-600' },
+  { id: 'glass', title: 'Шил', icon: Droplets, color: 'bg-green-100 text-green-600' },
+  { id: 'metal', title: 'Металл', icon: Zap, color: 'bg-gray-100 text-gray-600' },
+  { id: 'organic', title: 'Органик', icon: Leaf, color: 'bg-emerald-100 text-emerald-600' },
+  { id: 'hazardous', title: 'Аюултай', icon: AlertTriangle, color: 'bg-red-100 text-red-600' },
+  { id: 'general', title: 'Энгийн', icon: Trash2, color: 'bg-slate-100 text-slate-600' },
+  { id: 'centers', title: 'Хаана өгөх', icon: MapPin, color: 'bg-indigo-100 text-indigo-600' },
+  { id: 'tips', title: 'Эко зөвлөгөө', icon: Lightbulb, color: 'bg-amber-100 text-amber-600' },
+  { id: 'quiz', title: 'Сорил', icon: Award, color: 'bg-purple-100 text-purple-600' },
+];
 
-function Section({
-  icon: Icon,
-  color,
-  title,
-  children,
-  id,
-}: {
-  icon: any;
-  color: string;
-  title: string;
-  children: React.ReactNode;
-  id?: string;
-}) {
-  const [open, setOpen] = useState(true);
+function Section({ id, title, icon: Icon, color, children, defaultOpen = true }: any) {
+  const [open, setOpen] = useState(defaultOpen);
   return (
-    <div id={id} className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
+    <div id={id} className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden scroll-mt-20">
       <button
         onClick={() => setOpen(!open)}
-        className="w-full flex items-center justify-between p-6 text-left hover:bg-gray-50 transition-colors"
+        className="w-full flex items-center justify-between p-5 text-left hover:bg-gray-50 transition-colors"
       >
         <div className="flex items-center gap-3">
           <div className={`w-10 h-10 rounded-xl flex items-center justify-center ${color}`}>
             <Icon className="w-5 h-5" />
           </div>
-          <h2 className="text-xl font-bold text-dark">{title}</h2>
+          <h2 className="text-lg font-bold text-dark">{title}</h2>
         </div>
         {open ? <ChevronUp className="w-5 h-5 text-gray-400" /> : <ChevronDown className="w-5 h-5 text-gray-400" />}
       </button>
-      {open && <div className="px-6 pb-6">{children}</div>}
+      {open && <div className="px-5 pb-5">{children}</div>}
     </div>
   );
 }
 
 function ItemCard({ icon, title, desc }: { icon: React.ReactNode; title: string; desc: string }) {
   return (
-    <div className="flex items-start gap-3 bg-gray-50 rounded-xl p-4">
+    <div className="flex items-start gap-3 bg-gray-50 rounded-xl p-3">
       <div className="text-primary mt-0.5">{icon}</div>
       <div>
         <p className="font-medium text-sm text-dark">{title}</p>
-        <p className="text-sm text-gray-500 mt-0.5">{desc}</p>
+        <p className="text-xs text-gray-500 mt-0.5">{desc}</p>
       </div>
     </div>
   );
@@ -133,18 +136,10 @@ function ItemCard({ icon, title, desc }: { icon: React.ReactNode; title: string;
 
 function Alert({ type, children }: { type: 'warning' | 'tip'; children: React.ReactNode }) {
   return (
-    <div
-      className={`flex items-start gap-3 rounded-xl p-4 text-sm ${
-        type === 'warning'
-          ? 'bg-red-50 border border-red-100 text-red-700'
-          : 'bg-green-50 border border-green-100 text-green-700'
-      }`}
-    >
-      {type === 'warning' ? (
-        <AlertTriangle className="w-5 h-5 flex-shrink-0 mt-0.5" />
-      ) : (
-        <Lightbulb className="w-5 h-5 flex-shrink-0 mt-0.5" />
-      )}
+    <div className={`flex items-start gap-3 rounded-xl p-4 text-sm ${
+      type === 'warning' ? 'bg-red-50 border border-red-100 text-red-700' : 'bg-green-50 border border-green-100 text-green-700'
+    }`}>
+      {type === 'warning' ? <AlertTriangle className="w-5 h-5 flex-shrink-0 mt-0.5" /> : <Lightbulb className="w-5 h-5 flex-shrink-0 mt-0.5" />}
       <div>{children}</div>
     </div>
   );
@@ -160,9 +155,7 @@ export default function RecyclingGuidePage() {
   const handleAnswer = (index: number) => {
     if (selected !== null) return;
     setSelected(index);
-    if (index === quizQuestions[currentQ].correct) {
-      setScore((s) => s + 1);
-    }
+    if (index === quizQuestions[currentQ].correct) setScore((s) => s + 1);
   };
 
   const nextQuestion = () => {
@@ -189,50 +182,61 @@ export default function RecyclingGuidePage() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white">
+    <div className="min-h-screen bg-gray-50">
       {/* Header */}
       <header className="bg-white/80 backdrop-blur-md border-b border-gray-100 sticky top-0 z-50">
-        <div className="max-w-4xl mx-auto px-4 h-16 flex items-center justify-between">
+        <div className="max-w-4xl mx-auto px-4 h-14 flex items-center justify-between">
           <div className="flex items-center gap-3">
             <Link href="/" className="flex items-center gap-2 text-gray-500 hover:text-primary transition-colors">
               <ArrowLeft className="w-5 h-5" />
               <span className="text-sm font-medium hidden sm:inline">Буцах</span>
             </Link>
-            <div className="w-px h-6 bg-gray-200" />
-            <div className="w-9 h-9 bg-primary rounded-xl flex items-center justify-center">
-              <Recycle className="w-5 h-5 text-white" />
+            <div className="w-px h-5 bg-gray-200" />
+            <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center">
+              <Recycle className="w-4 h-4 text-white" />
             </div>
-            <h1 className="font-bold text-dark">Хог ангилах гарын авлага</h1>
+            <h1 className="font-bold text-dark text-sm sm:text-base">Хог ангилах гарын авлага</h1>
           </div>
         </div>
       </header>
 
-      <main className="max-w-4xl mx-auto px-4 py-8 space-y-6">
+      {/* Sticky Navigation */}
+      <div className="sticky top-14 bg-white border-b border-gray-100 z-40 overflow-x-auto">
+        <div className="max-w-4xl mx-auto px-4 py-2 flex gap-2">
+          {sections.map((s) => (
+            <a
+              key={s.id}
+              href={`#${s.id}`}
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium whitespace-nowrap bg-gray-50 hover:bg-primary/10 hover:text-primary transition-colors text-gray-600"
+            >
+              <s.icon className="w-3.5 h-3.5" />
+              {s.title}
+            </a>
+          ))}
+        </div>
+      </div>
+
+      <main className="max-w-4xl mx-auto px-4 py-6 space-y-6">
         {/* Hero */}
         <div className="bg-gradient-to-br from-primary-dark to-primary rounded-2xl p-8 text-white text-center">
-          <Recycle className="w-12 h-12 mx-auto mb-4 opacity-90" />
-          <h1 className="text-2xl md:text-3xl font-bold mb-3">
-            ♻️ Хог ангилах гарын авлага
-          </h1>
-          <p className="text-white/90 max-w-xl mx-auto leading-relaxed">
+          <Recycle className="w-10 h-10 mx-auto mb-3 opacity-90" />
+          <h1 className="text-2xl md:text-3xl font-bold mb-2">♻️ Хог ангилах гарын авлага</h1>
+          <p className="text-white/90 text-sm max-w-lg mx-auto leading-relaxed">
             Хогоо зөв ангилснаар бид дахин боловсруулах түүхий эдийг эргэлтэд оруулж, хогийн цэгийн ачааллыг бууруулж, Улаанбаатар хотоо илүү цэвэр, ногоон болгоход хувь нэмрээ оруулна.
           </p>
         </div>
 
         {/* 1. Plastic */}
-        <Section icon={Recycle} color="bg-yellow-100 text-yellow-600" title="1. Хуванцар (Пластик)" id="plastic">
+        <Section id="plastic" title="1. Хуванцар (Пластик)" icon={Recycle} color="bg-yellow-100 text-yellow-600">
           <div className="space-y-4">
-            <div>
-              <h3 className="font-semibold text-dark mb-2">Юу орох вэ:</h3>
-              <div className="grid sm:grid-cols-2 gap-2">
-                <ItemCard icon={<Droplets className="w-4 h-4" />} title="Ундааны сав" desc="Кока-Кола, Пепси, Спрайт, Сэлэнгэ, Эко, Mojito" />
-                <ItemCard icon={<Droplets className="w-4 h-4" />} title="Шампунийн сав" desc="Витафит, бусад биеийн арчилгаа" />
-                <ItemCard icon={<ShoppingBag className="w-4 h-4" />} title="Гялгар уут" desc="Төвлөрсөн цэвэр уут (хоолны биш)" />
-                <ItemCard icon={<Utensils className="w-4 h-4" />} title="Тэвш, тарагны сав" desc="Сүү ХК, Витафит тараг, хуванцар таглаа" />
-              </div>
+            <div className="grid sm:grid-cols-2 gap-2">
+              <ItemCard icon={<Droplets className="w-4 h-4" />} title="Ундааны сав" desc="Кока-Кола, Пепси, Спрайт, Сэлэнгэ, Эко, Mojito" />
+              <ItemCard icon={<Droplets className="w-4 h-4" />} title="Шампунийн сав" desc="Витафит, бусад биеийн арчилгаа" />
+              <ItemCard icon={<ShoppingBag className="w-4 h-4" />} title="Гялгар уут" desc="Төвлөрсөн цэвэр уут (хоолны биш)" />
+              <ItemCard icon={<Utensils className="w-4 h-4" />} title="Тэвш, тарагны сав" desc="Сүү ХК, Витафит тараг, хуванцар таглаа" />
             </div>
             <div className="bg-yellow-50 rounded-xl p-4">
-              <h3 className="font-semibold text-sm mb-2">📝 Хэрхэн бэлдэх вэ:</h3>
+              <h3 className="font-semibold text-sm mb-2">📝 Хэрхэн бэлдэх:</h3>
               <ol className="list-decimal list-inside text-sm text-gray-600 space-y-1">
                 <li>Савыг хоослон, усаар зайлна</li>
                 <li>Шошго, таглааг боломжтой бол салгана</li>
@@ -246,7 +250,7 @@ export default function RecyclingGuidePage() {
         </Section>
 
         {/* 2. Paper */}
-        <Section icon={BookOpen} color="bg-blue-100 text-blue-600" title="2. Цаас, картон" id="paper">
+        <Section id="paper" title="2. Цаас, картон" icon={BookOpen} color="bg-blue-100 text-blue-600">
           <div className="space-y-4">
             <div className="grid sm:grid-cols-2 gap-2">
               <ItemCard icon={<ShoppingBag className="w-4 h-4" />} title="Картон хайрцаг" desc="И-Март, Номин, Emart худалдан авалт" />
@@ -255,7 +259,7 @@ export default function RecyclingGuidePage() {
               <ItemCard icon={<BookOpen className="w-4 h-4" />} title="Оффисын цаас" desc="A4 цаас, хуучин баримт бичиг" />
             </div>
             <div className="bg-blue-50 rounded-xl p-4">
-              <h3 className="font-semibold text-sm mb-2">📝 Хэрхэн бэлдэх вэ:</h3>
+              <h3 className="font-semibold text-sm mb-2">📝 Хэрхэн бэлдэх:</h3>
               <ol className="list-decimal list-inside text-sm text-gray-600 space-y-1">
                 <li>Хайрцгийг задалж хавтгайруулна</li>
                 <li>Скоч, тууз, тороох утсыг авна</li>
@@ -272,7 +276,7 @@ export default function RecyclingGuidePage() {
         </Section>
 
         {/* 3. Glass */}
-        <Section icon={Droplets} color="bg-green-100 text-green-600" title="3. Шил" id="glass">
+        <Section id="glass" title="3. Шил" icon={Droplets} color="bg-green-100 text-green-600">
           <div className="space-y-4">
             <div className="grid sm:grid-cols-2 gap-2">
               <ItemCard icon={<Droplets className="w-4 h-4" />} title="Шар айрагны шил" desc="Боргио, Сэнгүр, Нийслэл, Алтан говь" />
@@ -281,7 +285,7 @@ export default function RecyclingGuidePage() {
               <ItemCard icon={<Droplets className="w-4 h-4" />} title="Сүүний шил" desc="Сүү ХК-ийн шилэн савтай бүтээгдэхүүн" />
             </div>
             <div className="bg-green-50 rounded-xl p-4">
-              <h3 className="font-semibold text-sm mb-2">📝 Хэрхэн бэлдэх вэ:</h3>
+              <h3 className="font-semibold text-sm mb-2">📝 Хэрхэн бэлдэх:</h3>
               <ol className="list-decimal list-inside text-sm text-gray-600 space-y-1">
                 <li>Савыг хоослон, зайлна</li>
                 <li>Металл таглааг салгаж металл ангилалд хийнэ</li>
@@ -295,16 +299,16 @@ export default function RecyclingGuidePage() {
         </Section>
 
         {/* 4. Metal */}
-        <Section icon={Award} color="bg-gray-100 text-gray-600" title="4. Металл" id="metal">
+        <Section id="metal" title="4. Металл" icon={Zap} color="bg-gray-100 text-gray-600">
           <div className="space-y-4">
             <div className="grid sm:grid-cols-2 gap-2">
-              <ItemCard icon={<Award className="w-4 h-4" />} title="Хөнгөн цагаан лааз" desc="Сэнгүр, Кока-Кола лааз" />
-              <ItemCard icon={<Award className="w-4 h-4" />} title="Төмөр лааз" desc="Загас, нөөшилсөн мах" />
-              <ItemCard icon={<Award className="w-4 h-4" />} title="Шар айрагны лааз" desc="Хөнгөн цагаан, төмөр лааз" />
-              <ItemCard icon={<Award className="w-4 h-4" />} title="Шилэн савны таглаа" desc="Металл таглаа, тугалган цаас" />
+              <ItemCard icon={<Zap className="w-4 h-4" />} title="Хөнгөн цагаан лааз" desc="Сэнгүр, Кока-Кола лааз" />
+              <ItemCard icon={<Zap className="w-4 h-4" />} title="Төмөр лааз" desc="Загас, нөөшилсөн мах" />
+              <ItemCard icon={<Zap className="w-4 h-4" />} title="Шар айрагны лааз" desc="Хөнгөн цагаан, төмөр лааз" />
+              <ItemCard icon={<Zap className="w-4 h-4" />} title="Шилэн савны таглаа" desc="Металл таглаа, тугалган цаас" />
             </div>
             <div className="bg-gray-50 rounded-xl p-4">
-              <h3 className="font-semibold text-sm mb-2">📝 Хэрхэн бэлдэх вэ:</h3>
+              <h3 className="font-semibold text-sm mb-2">📝 Хэрхэн бэлдэх:</h3>
               <ol className="list-decimal list-inside text-sm text-gray-600 space-y-1">
                 <li>Лаазыг хоослон зайлна</li>
                 <li>Боломжтой бол дарж хавтгайруулна</li>
@@ -317,7 +321,7 @@ export default function RecyclingGuidePage() {
         </Section>
 
         {/* 5. Organic */}
-        <Section icon={Leaf} color="bg-emerald-100 text-emerald-600" title="5. Органик хог (Хүнсний үлдэгдэл)" id="organic">
+        <Section id="organic" title="5. Органик хог (Хүнсний үлдэгдэл)" icon={Leaf} color="bg-emerald-100 text-emerald-600">
           <div className="space-y-4">
             <div className="grid sm:grid-cols-2 gap-2">
               <ItemCard icon={<Utensils className="w-4 h-4" />} title="Хүнсний ногоо" desc="Төмс, лууван, байцааны хальс" />
@@ -332,7 +336,7 @@ export default function RecyclingGuidePage() {
         </Section>
 
         {/* 6. Hazardous */}
-        <Section icon={AlertTriangle} color="bg-red-100 text-red-600" title="6. Аюултай хог — Тусгай цэгт" id="hazardous">
+        <Section id="hazardous" title="6. Аюултай хог — Тусгай цэгт" icon={AlertTriangle} color="bg-red-100 text-red-600">
           <div className="space-y-4">
             <div className="grid sm:grid-cols-2 gap-2">
               <ItemCard icon={<Battery className="w-4 h-4" />} title="Зай, батерей" desc="АА, ААА зай, утасны хуучин батерей" />
@@ -348,21 +352,19 @@ export default function RecyclingGuidePage() {
         </Section>
 
         {/* 7. General */}
-        <Section icon={Trash2} color="bg-slate-100 text-slate-600" title="7. Энгийн (ангилагдахгүй) хог" id="general">
-          <div className="space-y-3">
-            <p className="text-gray-600 text-sm">Дээрх ангилалд орохгүй зүйлс:</p>
-            <div className="grid sm:grid-cols-2 gap-2">
-              <ItemCard icon={<XCircle className="w-4 h-4" />} title="Чипс, чихрийн гялгар боодол" desc="Дахин боловсруулагддаггүй" />
-              <ItemCard icon={<XCircle className="w-4 h-4" />} title="Бохирдсон сальфетка" desc="Ариун цэврийн хэрэглэл" />
-              <ItemCard icon={<XCircle className="w-4 h-4" />} title="Тослог, бохир цаас" desc="Дахин боловсруулалтанд орохгүй" />
-              <ItemCard icon={<XCircle className="w-4 h-4" />} title="Тамхины иш" desc="Энгийн хогт хийх" />
-            </div>
+        <Section id="general" title="7. Энгийн (ангилагдахгүй) хог" icon={Trash2} color="bg-slate-100 text-slate-600">
+          <p className="text-sm text-gray-600 mb-3">Дээрх ангилалд орохгүй зүйлс:</p>
+          <div className="grid sm:grid-cols-2 gap-2">
+            <ItemCard icon={<XCircle className="w-4 h-4" />} title="Чипс, чихрийн гялгар боодол" desc="Дахин боловсруулагддаггүй" />
+            <ItemCard icon={<XCircle className="w-4 h-4" />} title="Бохирдсон сальфетка" desc="Ариун цэврийн хэрэглэл" />
+            <ItemCard icon={<XCircle className="w-4 h-4" />} title="Тослог, бохир цаас" desc="Дахин боловсруулалтанд орохгүй" />
+            <ItemCard icon={<XCircle className="w-4 h-4" />} title="Тамхины иш" desc="Энгийн хогт хийх" />
           </div>
         </Section>
 
         {/* Where to dispose */}
-        <Section icon={MapPin} color="bg-indigo-100 text-indigo-600" title="📍 Хаана өгөх вэ? — Улаанбаатар" id="centers">
-          <div className="space-y-6">
+        <Section id="centers" title="📍 Хаана өгөх вэ? — Улаанбаатар" icon={MapPin} color="bg-indigo-100 text-indigo-600">
+          <div className="space-y-4">
             <div className="overflow-x-auto">
               <table className="w-full text-sm">
                 <thead>
@@ -373,56 +375,22 @@ export default function RecyclingGuidePage() {
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-gray-100">
-                  <tr>
-                    <td className="p-3 font-medium">Морингийн давааны хог дахин боловсруулах үйлдвэр</td>
-                    <td className="p-3 text-gray-600">Барилгын хог, төвлөрсөн ландфилл</td>
-                    <td className="p-3 text-gray-600">Морин даваа орчим</td>
-                  </tr>
-                  <tr>
-                    <td className="p-3 font-medium">TML хуванцар дахин боловсруулах үйлдвэр</td>
-                    <td className="p-3 text-gray-600">PET болон бусад хуванцар (дуудлагаар авдаг)</td>
-                    <td className="p-3 text-gray-600">Улаанбаатар</td>
-                  </tr>
-                  <tr>
-                    <td className="p-3 font-medium">Төвшин Сайхан төв</td>
-                    <td className="p-3 text-gray-600">Шил, зэс, гууль, хөнгөн цагаан, төмөр, аккумлятор, хуванцар, гялгар уут</td>
-                    <td className="p-3 text-gray-600">Улаанбаатар</td>
-                  </tr>
-                  <tr>
-                    <td className="p-3 font-medium">Хороо орчмын дахивар цэгүүд</td>
-                    <td className="p-3 text-gray-600">Хуванцар, цаас, картон, лааз</td>
-                    <td className="p-3 text-gray-600">Дүүрэг бүрд</td>
-                  </tr>
-                  <tr>
-                    <td className="p-3 font-medium">Эргүүлийн худалдан авагч</td>
-                    <td className="p-3 text-gray-600">Лонх, лааз, цаас, төмөр (мөнгөөр авдаг)</td>
-                    <td className="p-3 text-gray-600">Хороолол дундуур</td>
-                  </tr>
-                  <tr>
-                    <td className="p-3 font-medium">Хуучин хувцас хүлээн авах цэг</td>
-                    <td className="p-3 text-gray-600">Хувцас, гутал</td>
-                    <td className="p-3 text-gray-600">Хан-Уул дүүрэг, Зайсангийн зам</td>
-                  </tr>
-                  <tr>
-                    <td className="p-3 font-medium">Эмийн сангууд</td>
-                    <td className="p-3 text-gray-600">Хугацаа дууссан эм</td>
-                    <td className="p-3 text-gray-600">Зарим томоохон эмийн сан</td>
-                  </tr>
-                  <tr>
-                    <td className="p-3 font-medium">Их дэлгүүр, сургуулийн хайрцаг</td>
-                    <td className="p-3 text-gray-600">Зай, батерей</td>
-                    <td className="p-3 text-gray-600">Худалдааны төв, сургууль</td>
-                  </tr>
+                  <tr><td className="p-3 font-medium">Морингийн давааны хог дахин боловсруулах үйлдвэр</td><td className="p-3 text-gray-600">Барилгын хог, төвлөрсөн ландфилл</td><td className="p-3 text-gray-600">Морин даваа орчим</td></tr>
+                  <tr><td className="p-3 font-medium">TML хуванцар дахин боловсруулах үйлдвэр</td><td className="p-3 text-gray-600">PET болон бусад хуванцар (дуудлагаар авдаг)</td><td className="p-3 text-gray-600">Улаанбаатар</td></tr>
+                  <tr><td className="p-3 font-medium">Төвшин Сайхан төв</td><td className="p-3 text-gray-600">Шил, зэс, гууль, хөнгөн цагаан, төмөр, аккумлятор, хуванцар, гялгар уут</td><td className="p-3 text-gray-600">Улаанбаатар</td></tr>
+                  <tr><td className="p-3 font-medium">Хороо орчмын дахивар цэгүүд</td><td className="p-3 text-gray-600">Хуванцар, цаас, картон, лааз</td><td className="p-3 text-gray-600">Дүүрэг бүрд</td></tr>
+                  <tr><td className="p-3 font-medium">Эргүүлийн худалдан авагч</td><td className="p-3 text-gray-600">Лонх, лааз, цаас, төмөр (мөнгөөр авдаг)</td><td className="p-3 text-gray-600">Хороолол дундуур</td></tr>
+                  <tr><td className="p-3 font-medium">Хуучин хувцас хүлээн авах цэг</td><td className="p-3 text-gray-600">Хувцас, гутал</td><td className="p-3 text-gray-600">Хан-Уул дүүрэг, Зайсангийн зам</td></tr>
+                  <tr><td className="p-3 font-medium">Эмийн сангууд</td><td className="p-3 text-gray-600">Хугацаа дууссан эм</td><td className="p-3 text-gray-600">Зарим томоохон эмийн сан</td></tr>
+                  <tr><td className="p-3 font-medium">Их дэлгүүр, сургуулийн хайрцаг</td><td className="p-3 text-gray-600">Зай, батерей</td><td className="p-3 text-gray-600">Худалдааны төв, сургууль</td></tr>
                 </tbody>
               </table>
             </div>
-
             <Alert type="tip">
-              📲 <strong>Нийслэлийн байгаль орчны газар</strong> дахивар хүлээн авах цэг, дахин боловсруулах үйлдвэрүүдийн байршлыг ArcGIS газрын зургийн санд байршуулсан байдаг. Мөн дүүргийнхээ хорооноос хамгийн ойрын цэгийг лавлаж болно.
+              <strong>Нийслэлийн байгаль орчны газар</strong> дахивар хүлээн авах цэг, дахин боловсруулах үйлдвэрүүдийн байршлыг ArcGIS газрын зургийн санд байршуулсан байдаг. Мөн дүүргийнхээ хорооноос хамгийн ойрын цэгийг лавлаж болно.
             </Alert>
-
             <div className="bg-indigo-50 rounded-xl p-4">
-              <h3 className="font-semibold text-sm mb-3">Байршлын хүснэгт:</h3>
+              <h3 className="font-semibold text-sm mb-3">Товчлох:</h3>
               <div className="grid sm:grid-cols-2 gap-3 text-sm">
                 <div className="bg-white rounded-lg p-3 border border-indigo-100">
                   <p className="font-medium text-indigo-900">Хуванцар, цаас, металл</p>
@@ -446,7 +414,7 @@ export default function RecyclingGuidePage() {
         </Section>
 
         {/* Eco Tips */}
-        <Section icon={Lightbulb} color="bg-amber-100 text-amber-600" title="💚 Эко зөвлөгөө — Монгол ахуйд тохирсон" id="tips">
+        <Section id="tips" title="💚 Эко зөвлөгөө — Монгол ахуйд тохирсон" icon={Lightbulb} color="bg-amber-100 text-amber-600">
           <div className="space-y-6">
             <div>
               <h3 className="font-semibold text-dark mb-3 flex items-center gap-2">
@@ -520,14 +488,14 @@ export default function RecyclingGuidePage() {
         {/* Quiz */}
         <div id="quiz" className="bg-gradient-to-br from-primary-dark to-primary rounded-2xl p-8 text-white">
           <div className="text-center mb-6">
-            <Award className="w-12 h-12 mx-auto mb-4" />
-            <h2 className="text-2xl font-bold mb-2">📝 Хог ангилах сорил</h2>
-            <p className="text-white/80">Өөрийгөө шалгаж, хог ангилах мэдлэгээ сориорой!</p>
+            <Award className="w-10 h-10 mx-auto mb-3" />
+            <h2 className="text-xl font-bold mb-2">📝 Хог ангилах сорил</h2>
+            <p className="text-white/80 text-sm">Өөрийгөө шалгаж, хог ангилах мэдлэгээ сориорой!</p>
           </div>
 
           {!quizStarted ? (
             <div className="text-center">
-              <p className="text-white/70 mb-4">{quizQuestions.length} асуулт</p>
+              <p className="text-white/70 mb-4 text-sm">{quizQuestions.length} асуулт</p>
               <button
                 onClick={() => setQuizStarted(true)}
                 className="bg-white text-primary-dark px-8 py-3 rounded-xl font-bold hover:bg-white/90 transition-all"
@@ -537,12 +505,8 @@ export default function RecyclingGuidePage() {
             </div>
           ) : showResult ? (
             <div className="text-center">
-              <div className="text-5xl font-bold mb-2">
-                {score}/{quizQuestions.length}
-              </div>
-              <p className={`text-lg font-semibold mb-4 ${getRank().color}`}>
-                {getRank().label}
-              </p>
+              <div className="text-5xl font-bold mb-2">{score}/{quizQuestions.length}</div>
+              <p className={`text-lg font-semibold mb-4 ${getRank().color}`}>{getRank().label}</p>
               <div className="bg-white/10 rounded-xl p-4 mb-6 text-left text-sm">
                 <p className="font-semibold mb-2">Хариулт:</p>
                 {quizQuestions.map((q, i) => (
@@ -552,9 +516,7 @@ export default function RecyclingGuidePage() {
                     ) : (
                       <XCircle className="w-4 h-4 text-red-400 mt-0.5 flex-shrink-0" />
                     )}
-                    <span>
-                      {i + 1}. {q.options[q.correct]}
-                    </span>
+                    <span>{i + 1}. {q.options[q.correct]}</span>
                   </div>
                 ))}
               </div>
@@ -572,42 +534,26 @@ export default function RecyclingGuidePage() {
                 <span>Оноо: {score}</span>
               </div>
               <div className="w-full bg-white/20 rounded-full h-2 mb-6">
-                <div
-                  className="bg-white rounded-full h-2 transition-all"
-                  style={{ width: `${((currentQ + 1) / quizQuestions.length) * 100}%` }}
-                />
+                <div className="bg-white rounded-full h-2 transition-all" style={{ width: `${((currentQ + 1) / quizQuestions.length) * 100}%` }} />
               </div>
-
-              <h3 className="text-lg font-bold mb-4">
-                {currentQ + 1}. {quizQuestions[currentQ].question}
-              </h3>
-
+              <h3 className="text-lg font-bold mb-4">{currentQ + 1}. {quizQuestions[currentQ].question}</h3>
               <div className="space-y-3">
                 {quizQuestions[currentQ].options.map((option, index) => {
                   const isCorrect = index === quizQuestions[currentQ].correct;
                   const isSelected = selected === index;
                   const showCorrect = selected !== null && isCorrect;
                   const showWrong = selected !== null && isSelected && !isCorrect;
-
                   return (
                     <button
                       key={index}
                       onClick={() => handleAnswer(index)}
                       disabled={selected !== null}
                       className={`w-full text-left p-4 rounded-xl transition-all text-sm font-medium ${
-                        showCorrect
-                          ? 'bg-green-500 text-white'
-                          : showWrong
-                          ? 'bg-red-500 text-white'
-                          : isSelected
-                          ? 'bg-white/20 text-white'
-                          : 'bg-white/10 text-white hover:bg-white/20'
+                        showCorrect ? 'bg-green-500 text-white' : showWrong ? 'bg-red-500 text-white' : isSelected ? 'bg-white/20 text-white' : 'bg-white/10 text-white hover:bg-white/20'
                       }`}
                     >
                       <div className="flex items-center gap-3">
-                        <span className="w-6 h-6 rounded-full bg-white/20 flex items-center justify-center text-xs font-bold flex-shrink-0">
-                          {String.fromCharCode(65 + index)}
-                        </span>
+                        <span className="w-6 h-6 rounded-full bg-white/20 flex items-center justify-center text-xs font-bold flex-shrink-0">{String.fromCharCode(65 + index)}</span>
                         {option}
                         {showCorrect && <CheckCircle className="w-5 h-5 ml-auto" />}
                         {showWrong && <XCircle className="w-5 h-5 ml-auto" />}
@@ -616,7 +562,6 @@ export default function RecyclingGuidePage() {
                   );
                 })}
               </div>
-
               {selected !== null && (
                 <button
                   onClick={nextQuestion}
@@ -630,12 +575,9 @@ export default function RecyclingGuidePage() {
         </div>
 
         {/* Footer CTA */}
-        <div className="text-center py-8">
-          <p className="text-gray-500 mb-4">Таны жижиг алхам — Улаанбаатарын том өөрчлөлт!</p>
-          <Link
-            href="/"
-            className="inline-flex items-center gap-2 bg-primary text-white px-6 py-3 rounded-full font-semibold hover:bg-primary-dark transition-all"
-          >
+        <div className="text-center py-6">
+          <p className="text-gray-500 mb-4 text-sm">Таны жижиг алхам — Улаанбаатарын том өөрчлөлт!</p>
+          <Link href="/" className="inline-flex items-center gap-2 bg-primary text-white px-6 py-3 rounded-full font-semibold hover:bg-primary-dark transition-all">
             <Leaf className="w-5 h-5" />
             GreenLoop AI-рүү буцах
           </Link>
