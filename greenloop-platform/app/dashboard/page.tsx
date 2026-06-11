@@ -1,7 +1,17 @@
 'use client';
 
 import React, { useState } from 'react';
-import { User, Award, Leaf, Recycle, TreePine, TrendingUp } from 'lucide-react';
+import dynamic from 'next/dynamic';
+import { User, Award, Leaf, Recycle, TreePine, TrendingUp, MapPin, Navigation } from 'lucide-react';
+
+const Chart = dynamic(() => import('react-chartjs-2').then((mod) => {
+  const { Chart: ChartJS, CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend, Filler } = require('chart.js');
+  ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend, Filler);
+  return mod.Line;
+}), {
+  ssr: false,
+  loading: () => <div className="h-64 bg-gray-100 rounded-xl animate-pulse" />
+});
 
 export default function Dashboard() {
   const [activeTab, setActiveTab] = useState('overview');
@@ -32,6 +42,38 @@ export default function Dashboard() {
     { name: 'Tree Saver', icon: '🌳', description: '100 кг CO₂ хэмнэсэн', earned: true },
     { name: 'Climate Protector', icon: '🌍', description: '500 кг CO₂ хэмнэсэн', earned: false },
   ];
+
+  const chartData = {
+    labels: ['1-р сар', '2-р сар', '3-р сар', '4-р сар', '5-р сар', '6-р сар'],
+    datasets: [
+      {
+        label: 'CO₂ хэмнэлт (кг)',
+        data: [120, 190, 300, 450, 580, 712],
+        borderColor: '#22c55e',
+        backgroundColor: 'rgba(34, 197, 94, 0.1)',
+        fill: true,
+        tension: 0.4,
+      },
+    ],
+  };
+
+  const chartOptions = {
+    responsive: true,
+    plugins: {
+      legend: {
+        position: 'top' as const,
+      },
+      title: {
+        display: true,
+        text: 'CO₂ хэмнэлтийн график',
+      },
+    },
+    scales: {
+      y: {
+        beginAtZero: true,
+      },
+    },
+  };
 
   return (
     <div className="min-h-screen bg-gray-50 pt-20">
@@ -67,6 +109,20 @@ export default function Dashboard() {
           ))}
         </div>
 
+        {/* CO2 Chart */}
+        <div className="bg-white rounded-2xl p-8 mb-8">
+          <div className="flex items-center justify-between mb-6">
+            <h2 className="text-xl font-bold">CO₂ Хэмнэлтийн Аналитик</h2>
+            <div className="flex items-center gap-2 text-sm text-gray-500">
+              <TrendingUp className="w-4 h-4 text-green-500" />
+              <span>+12% энэ сард</span>
+            </div>
+          </div>
+          <div className="h-80">
+            <Chart data={chartData} options={chartOptions} />
+          </div>
+        </div>
+
         {/* Tabs */}
         <div className="flex gap-2 mb-6 overflow-x-auto">
           {tabs.map((tab) => (
@@ -98,6 +154,43 @@ export default function Dashboard() {
                 <span>Eco Legend (1000+)</span>
               </div>
               <p className="text-gray-500">Дахиад 288 кг CO₂ хэмнэвэл Eco Advocate түвшинд хүрнэ.</p>
+              
+              {/* 5-Stage Tracking Summary */}
+              <div className="mt-8">
+                <h3 className="font-bold mb-4">Сүүлийн 5 Ye Шатны Tracking</h3>
+                <div className="grid md:grid-cols-3 gap-4">
+                  <div className="p-4 bg-green-50 rounded-xl border border-green-100">
+                    <div className="flex items-center gap-2 mb-2">
+                      <div className="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center">
+                        <Recycle className="w-4 h-4 text-green-600" />
+                      </div>
+                      <span className="font-semibold text-sm">PET - 5 кг</span>
+                    </div>
+                    <div className="text-xs text-green-600 font-medium">✓ Борлуулалтад гарсан</div>
+                    <div className="text-xs text-gray-400 mt-1">2025-06-01</div>
+                  </div>
+                  <div className="p-4 bg-blue-50 rounded-xl border border-blue-100">
+                    <div className="flex items-center gap-2 mb-2">
+                      <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center">
+                        <Recycle className="w-4 h-4 text-blue-600" />
+                      </div>
+                      <span className="font-semibold text-sm">HDPE - 3 кг</span>
+                    </div>
+                    <div className="text-xs text-blue-600 font-medium">→ Бүтээгдэхүүн боловсруулж байна</div>
+                    <div className="text-xs text-gray-400 mt-1">2025-06-05</div>
+                  </div>
+                  <div className="p-4 bg-yellow-50 rounded-xl border border-yellow-100">
+                    <div className="flex items-center gap-2 mb-2">
+                      <div className="w-8 h-8 bg-yellow-100 rounded-full flex items-center justify-center">
+                        <Recycle className="w-4 h-4 text-yellow-600" />
+                      </div>
+                      <span className="font-semibold text-sm">Цаас - 10 кг</span>
+                    </div>
+                    <div className="text-xs text-yellow-600 font-medium">→ Төвд хүргэгдэж байна</div>
+                    <div className="text-xs text-gray-400 mt-1">2025-06-08</div>
+                  </div>
+                </div>
+              </div>
             </div>
           )}
 
@@ -147,6 +240,10 @@ export default function Dashboard() {
                 <div className="font-semibold text-primary-dark mb-2">GPS Байршил:</div>
                 <div className="text-sm text-gray-600">47.9187°N, 106.9176°E</div>
                 <div className="text-sm text-gray-500">Монголын ойн нөхөн сэргээлт</div>
+                <div className="mt-3 flex items-center gap-2">
+                  <MapPin className="w-4 h-4 text-primary" />
+                  <span className="text-xs text-primary">Google Maps дээр харах</span>
+                </div>
               </div>
             </div>
           )}
