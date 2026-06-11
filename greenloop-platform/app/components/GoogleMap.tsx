@@ -165,39 +165,20 @@ export default function RecyclingMap() {
         </button>
       </div>
 
-      {/* Map Placeholder */}
-      <div className="rounded-2xl overflow-hidden border border-gray-100 shadow-sm bg-gray-50">
-        <div className="h-96 flex items-center justify-center relative">
-          <div className="text-center">
-            <MapPin className="w-16 h-16 text-primary/30 mx-auto mb-4" />
-            <p className="text-gray-400 font-medium">Google Maps API Key шаардлагатай</p>
-            <p className="text-gray-300 text-sm mt-1">NEXT_PUBLIC_GOOGLE_MAPS_API_KEY</p>
-          </div>
-          
-          {/* User location marker */}
-          {userLocation && (
-            <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
-              <div className="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center text-white shadow-lg">
-                <Navigation className="w-4 h-4" />
-              </div>
-            </div>
-          )}
-          
-          {/* Center markers */}
-          {centers.map((center, i) => (
-            <div
-              key={center.id}
-              className="absolute"
-              style={{
-                top: `${30 + i * 20}%`,
-                left: `${20 + i * 25}%`,
-              }}
-            >
-              <div className="w-8 h-8 bg-primary rounded-full flex items-center justify-center text-white shadow-lg">
-                <MapPin className="w-4 h-4" />
-              </div>
-            </div>
-          ))}
+      {/* Map Embed with Styling */}
+      <div className="rounded-2xl overflow-hidden border border-gray-100 shadow-lg bg-white">
+        <div className="relative w-full h-96 md:h-[500px]">
+          <iframe
+            src="https://www.google.com/maps/embed?pb=!1m14!1m12!1m3!1d42788.098351814544!2d106.90868296242674!3d47.912081023691094!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!5e0!3m2!1sen!2smn!4v1781169002952!5m2!1sen!2smn"
+            width="100%"
+            height="100%"
+            style={{ border: 0, borderRadius: '1rem' }}
+            allowFullScreen
+            loading="lazy"
+            referrerPolicy="no-referrer-when-downgrade"
+            className="rounded-2xl"
+            title="Улаанбаатар - Дахин боловсруулах төвүүд"
+          />
         </div>
       </div>
 

@@ -10,3 +10,6 @@
 .DS_Store
 .vercel
 memory/
+.env
+.env.local
+.env*.local
