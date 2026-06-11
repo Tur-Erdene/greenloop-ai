@@ -51,13 +51,13 @@ export default function Hero() {
           </div>
 
           <h1 className="text-5xl md:text-7xl font-extrabold text-white leading-tight mb-6">
-            Таны хог хаягдал
+            Ногоон хот
             <br />
-            <span className="text-primary">экологийн нөлөө</span> болно
+            <span className="text-primary">хамтдаа бүтээе</span>
           </h1>
 
           <p className="text-lg text-white/70 mb-10 max-w-xl leading-relaxed">
-            GreenLoop AI-тай хамт бүх дахин боловсруулалтыг хэмжигдэхүйц, хянагдахуйц, урамшуулалтай болгоё.
+            Хог хаягдлаа дахин боловсруул. CO₂ хэмнэлтээ хар. Урамшуулал аваад, ногоон ирээдүйг хамтдаа бүтээе.
           </p>
 
           <div className="flex flex-wrap gap-4 mb-16">
