@@ -1,8 +1,7 @@
 'use client';
 
 import React, { useEffect, useState, useCallback } from 'react';
-import { GoogleMap, LoadScript, Marker, InfoWindow, DirectionsRenderer } from '@react-google-maps/api';
-import { MapPin, Navigation, X } from 'lucide-react';
+import { MapPin, Navigation, X, Truck } from 'lucide-react';
 
 const mapContainerStyle = {
   width: '100%',
@@ -29,8 +28,8 @@ export default function RecyclingMap() {
   const [centers, setCenters] = useState<RecyclingCenter[]>([]);
   const [selectedCenter, setSelectedCenter] = useState<RecyclingCenter | null>(null);
   const [userLocation, setUserLocation] = useState<{ lat: number; lng: number } | null>(null);
-  const [directions, setDirections] = useState<google.maps.DirectionsResult | null>(null);
-  const [map, setMap] = useState<google.maps.Map | null>(null);
+  const [directions, setDirections] = useState<any>(null);
+  const [map, setMap] = useState<any>(null);
   const [loading, setLoading] = useState(true);
 
   // Demo centers
@@ -105,31 +104,15 @@ export default function RecyclingMap() {
     return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
   }, []);
 
-  // Calculate route
+  // Calculate route (mock - Google Maps API key required)
   const calculateRoute = useCallback((destination: RecyclingCenter) => {
-    if (!userLocation || !window.google) return;
-
-    const directionsService = new window.google.maps.DirectionsService();
-
-    directionsService.route(
-      {
-        origin: userLocation,
-        destination: { lat: destination.lat, lng: destination.lng },
-        travelMode: window.google.maps.TravelMode.DRIVING,
-      },
-      (result, status) => {
-        if (status === window.google.maps.DirectionsStatus.OK) {
-          setDirections(result);
-        } else {
-          console.error('Directions request failed:', status);
-        }
-      }
-    );
+    if (!userLocation) return;
+    console.log('Route to:', destination.name, 'from', userLocation);
   }, [userLocation]);
 
   // Find nearest center
   const findNearestCenter = useCallback(() => {
-    if (!userLocation || !map || centers.length === 0) return;
+    if (!userLocation || centers.length === 0) return;
 
     let nearest: RecyclingCenter = centers[0];
     let minDistance = Infinity;
@@ -144,11 +127,8 @@ export default function RecyclingMap() {
     
     setSelectedCenter(nearest);
     calculateRoute(nearest);
-    map.panTo({ lat: nearest.lat, lng: nearest.lng });
-    map.setZoom(15);
-  }, [userLocation, centers, map, getDistance, calculateRoute]);
+  }, [userLocation, centers, getDistance, calculateRoute]);
 
-  // Clear directions
   const clearRoute = () => {
     setDirections(null);
     setSelectedCenter(null);
@@ -185,90 +165,41 @@ export default function RecyclingMap() {
         </button>
       </div>
 
-      {/* Map */}
-      <LoadScript
-        googleMapsApiKey={process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY || ''}
-      >
-        <div className="rounded-2xl overflow-hidden border border-gray-100 shadow-sm">
-          <GoogleMap
-            mapContainerStyle={mapContainerStyle}
-            center={userLocation || defaultCenter}
-            zoom={13}
-            onLoad={setMap}
-            options={{
-              mapTypeControl: true,
-              streetViewControl: false,
-              fullscreenControl: true,
-              zoomControl: true,
-              mapTypeId: 'roadmap',
-            }}
-          >
-            {/* User location marker */}
-            {userLocation && (
-              <Marker
-                position={userLocation}
-                icon={{
-                  url: 'https://maps.google.com/mapfiles/ms/icons/blue-dot.png',
-                  scaledSize: new window.google.maps.Size(40, 40),
-                }}
-                title="Таны байршил"
-              />
-            )}
-
-            {/* Center markers */}
-            {centers.map((center) => (
-              <Marker
-                key={center.id}
-                position={{ lat: center.lat, lng: center.lng }}
-                onClick={() => {
-                  setSelectedCenter(center);
-                  calculateRoute(center);
-                }}
-                icon={{
-                  url: 'https://maps.google.com/mapfiles/ms/icons/green-dot.png',
-                  scaledSize: new window.google.maps.Size(36, 36),
-                }}
-              />
-            ))}
-
-            {/* Info Window */}
-            {selectedCenter && (
-              <InfoWindow
-                position={{ lat: selectedCenter.lat, lng: selectedCenter.lng }}
-                onCloseClick={() => setSelectedCenter(null)}
-              >
-                <div className="p-2 max-w-xs">
-                  <h3 className="font-bold text-sm mb-2">{selectedCenter.name}</h3>
-                  <p className="text-xs text-gray-500 mb-1">{selectedCenter.address}</p>
-                  <p className="text-xs text-gray-500 mb-2">📞 {selectedCenter.phone}</p>
-                  <p className="text-xs text-gray-500 mb-2">🕐 {selectedCenter.operating_hours}</p>
-                  <div className="flex gap-1 flex-wrap">
-                    {selectedCenter.materials.map((m) => (
-                      <span key={m} className="text-xs bg-green-100 text-green-700 px-2 py-0.5 rounded">
-                        {m}
-                      </span>
-                    ))}
-                  </div>
-                </div>
-              </InfoWindow>
-            )}
-
-            {/* Directions */}
-            {directions && (
-              <DirectionsRenderer
-                directions={directions}
-                options={{
-                  suppressMarkers: true,
-                  polylineOptions: {
-                    strokeColor: '#22c55e',
-                    strokeWeight: 5,
-                  },
-                }}
-              />
-            )}
-          </GoogleMap>
+      {/* Map Placeholder */}
+      <div className="rounded-2xl overflow-hidden border border-gray-100 shadow-sm bg-gray-50">
+        <div className="h-96 flex items-center justify-center relative">
+          <div className="text-center">
+            <MapPin className="w-16 h-16 text-primary/30 mx-auto mb-4" />
+            <p className="text-gray-400 font-medium">Google Maps API Key шаардлагатай</p>
+            <p className="text-gray-300 text-sm mt-1">NEXT_PUBLIC_GOOGLE_MAPS_API_KEY</p>
+          </div>
+          
+          {/* User location marker */}
+          {userLocation && (
+            <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
+              <div className="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center text-white shadow-lg">
+                <Navigation className="w-4 h-4" />
+              </div>
+            </div>
+          )}
+          
+          {/* Center markers */}
+          {centers.map((center, i) => (
+            <div
+              key={center.id}
+              className="absolute"
+              style={{
+                top: `${30 + i * 20}%`,
+                left: `${20 + i * 25}%`,
+              }}
+            >
+              <div className="w-8 h-8 bg-primary rounded-full flex items-center justify-center text-white shadow-lg">
+                <MapPin className="w-4 h-4" />
+              </div>
+            </div>
+          ))}
         </div>
-      </LoadScript>
+      </div>
 
       {/* Center List */}
       <div className="grid md:grid-cols-3 gap-4">
@@ -283,7 +214,6 @@ export default function RecyclingMap() {
               onClick={() => {
                 setSelectedCenter(center);
                 calculateRoute(center);
-                map?.panTo({ lat: center.lat, lng: center.lng });
               }}
               className={`bg-white rounded-xl p-4 border cursor-pointer transition-all hover:shadow-md ${
                 selectedCenter?.id === center.id ? 'border-primary shadow-md' : 'border-gray-100'
