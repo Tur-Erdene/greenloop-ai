@@ -11,8 +11,8 @@ const centers = [
 
 export default function MapSection() {
   const mapRef = useRef(null);
-  const [selectedCenter, setSelectedCenter] = useState(null);
-  const [userLocation, setUserLocation] = useState(null);
+  const [selectedCenter, setSelectedCenter] = useState<{ id: number; name: string; lat: number; lng: number; materials: string[] } | null>(null);
+  const [userLocation, setUserLocation] = useState<{ lat: number; lng: number } | null>(null);
 
   useEffect(() => {
     if (typeof window !== 'undefined' && navigator.geolocation) {
