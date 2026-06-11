@@ -130,6 +130,28 @@ function Section({ id, title, icon: Icon, color, children, defaultOpen = true }:
   );
 }
 
+// Visual Example Component for showing waste type images
+function VisualExample({ icon: Icon, color, bgColor, title, items }: { icon: any; color: string; bgColor: string; title: string; items: string[] }) {
+  return (
+    <div className={`${bgColor} rounded-xl p-4 border`}>
+      <div className="flex items-center gap-2 mb-3">
+        <div className={`w-8 h-8 rounded-lg flex items-center justify-center ${color}`}>
+          <Icon className="w-4 h-4 text-white" />
+        </div>
+        <span className="font-bold text-sm">{title}</span>
+      </div>
+      <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
+        {items.map((item, i) => (
+          <div key={i} className="bg-white/70 rounded-lg p-2 text-center">
+            <div className="text-2xl mb-1">{item.split(' ')[0]}</div>
+            <div className="text-xs text-gray-600 leading-tight">{item.split(' ').slice(1).join(' ')}</div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
 function ItemCard({ icon, title, desc }: { icon: React.ReactNode; title: string; desc: string }) {
   return (
     <div className="flex items-start gap-3 bg-gray-50 rounded-xl p-3">
