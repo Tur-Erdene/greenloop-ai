@@ -9,6 +9,7 @@ export default function Navbar() {
   const navItems = [
     { label: 'CO₂ Тооцоолуур', href: '#calculator' },
     { label: 'Боломжууд', href: '#features' },
+    { label: 'AI Зөвлөх', href: '/ai-advisor' },
     { label: 'Процесс', href: '#how-it-works' },
     { label: 'Газрын зураг', href: '#map' },
     { label: 'Leaderboard', href: '#leaderboard' },

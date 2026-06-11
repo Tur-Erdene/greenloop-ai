@@ -1,6 +1,7 @@
 'use client';
 
 import React from 'react';
+import Link from 'next/link';
 import { Wind, Truck, Trophy, TreePine, BarChart3, Bot } from 'lucide-react';
 
 const features = [
@@ -9,36 +10,42 @@ const features = [
     title: 'CO₂ Тооцоолуур',
     description: 'PET, HDPE, aluminum, paper, glass материал бүрээс хэдэн кг CO₂ хэмнэснийг харуул.',
     color: 'bg-green-100 text-green-600',
+    href: '/#calculator',
   },
   {
     icon: Truck,
     title: 'Pickup Tracking',
     description: 'Google Maps дээр хог цэвэрлүүлэх хүсэлтээ илгээж, жолоочийн байршлыг хяна.',
     color: 'bg-blue-100 text-blue-600',
+    href: '/tracking',
   },
   {
     icon: Trophy,
     title: 'Eco Rewards',
     description: 'Эко оноо, badge, leaderboard — тоглоомжуулалтаар урамшуул.',
     color: 'bg-amber-100 text-amber-600',
+    href: '/dashboard',
   },
   {
     icon: TreePine,
     title: 'Tree Funding',
     description: 'Хандивыг мод тарих болгон хөрвүүлж, GPS бүртгэл хөтөл.',
     color: 'bg-emerald-100 text-emerald-600',
+    href: '/#tree-fund',
   },
   {
     icon: BarChart3,
     title: 'ESG Dashboard',
     description: 'Байгууллагын тогтвортой хөгжлийн тайлан, ESG аналитик.',
     color: 'bg-indigo-100 text-indigo-600',
+    href: '/admin',
   },
   {
     icon: Bot,
     title: 'AI Зөвлөх',
     description: 'AI ашиглан хэрэглэгчдэд тогтвортой хувийн зөвлөгөө өг.',
     color: 'bg-purple-100 text-purple-600',
+    href: '/ai-advisor',
   },
 ];
 
@@ -59,22 +66,33 @@ export default function Features() {
         </div>
 
         <div className="grid md:grid-cols-3 gap-6">
-          {features.map((feature, index) => (
-            <div
-              key={index}
-              className="bg-white rounded-2xl p-8 border border-gray-100 hover:border-primary/30 hover:shadow-xl transition-all group hover:-translate-y-1"
-            >
-              <div className={`w-14 h-14 rounded-xl flex items-center justify-center mb-6 ${feature.color}`}>
-                <feature.icon className="w-7 h-7" />
+          {features.map((feature, index) => {
+            const CardContent = (
+              <div
+                className="bg-white rounded-2xl p-8 border border-gray-100 hover:border-primary/30 hover:shadow-xl transition-all group hover:-translate-y-1 cursor-pointer"
+              >
+                <div className={`w-14 h-14 rounded-xl flex items-center justify-center mb-6 ${feature.color}`}>
+                  <feature.icon className="w-7 h-7" />
+                </div>
+                <h3 className="text-xl font-bold mb-3 group-hover:text-primary transition-colors">
+                  {feature.title}
+                </h3>
+                <p className="text-gray-500 text-sm leading-relaxed">
+                  {feature.description}
+                </p>
               </div>
-              <h3 className="text-xl font-bold mb-3 group-hover:text-primary transition-colors">
-                {feature.title}
-              </h3>
-              <p className="text-gray-500 text-sm leading-relaxed">
-                {feature.description}
-              </p>
-            </div>
-          ))}
+            );
+
+            return feature.href.startsWith('#') ? (
+              <a key={index} href={feature.href}>
+                {CardContent}
+              </a>
+            ) : (
+              <Link key={index} href={feature.href}>
+                {CardContent}
+              </Link>
+            );
+          })}
         </div>
       </div>
     </section>
