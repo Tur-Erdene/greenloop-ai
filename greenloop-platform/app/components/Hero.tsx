@@ -23,7 +23,7 @@ export default function Hero() {
     return () => observer.disconnect();
   }, []);
 
-  function animateValue(start, end, duration, callback) {
+  function animateValue(start: number, end: number, duration: number, callback: (value: number) => void) {
     const startTime = performance.now();
     function update(currentTime) {
       const elapsed = currentTime - startTime;
